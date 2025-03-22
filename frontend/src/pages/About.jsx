@@ -68,7 +68,7 @@ export default function About() {
         <div className="flex justify-center mb-10">
           <div
             className="relative rounded-lg shadow-lg w-full max-w-4xl h-56 md:h-64 bg-cover bg-center transition-transform duration-300 ease-out hover:scale-105 hover:rotate-1"
-            style={{ backgroundImage: "url('/images/image1.jpg')", perspective: "1000px" }}
+            style={{ backgroundImage: "url('/image1.png')", perspective: "1000px" }}
           >
             <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center p-4">
               <p className="text-white text-xl italic mb-3 font-semibold text-center">
@@ -84,7 +84,7 @@ export default function About() {
           {/* Quote Card 2 */}
           <div
             className="relative rounded-lg shadow-md h-56 md:h-64 bg-cover bg-center transition-transform duration-300 ease-out hover:scale-105 hover:rotate-2"
-            style={{ backgroundImage: "url('/images/image2.jpg')", perspective: "1000px" }}
+            style={{ backgroundImage: "url('/image2.jpg')", perspective: "1000px" }}
           >
             <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center p-4">
               <p className="text-white italic text-lg mb-3 text-center">
@@ -97,7 +97,7 @@ export default function About() {
           {/* Quote Card 3 */}
           <div
             className="relative rounded-lg shadow-md h-56 md:h-64 bg-cover bg-center transition-transform duration-300 ease-out hover:scale-105 hover:rotate-1"
-            style={{ backgroundImage: "url('/images/image3.jpg')", perspective: "1000px" }}
+            style={{ backgroundImage: "url('/image3.jpg')", perspective: "1000px" }}
           >
             <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center p-4">
               <p className="text-white italic text-lg mb-3 text-center">
@@ -110,7 +110,7 @@ export default function About() {
           {/* Quote Card 4 */}
           <div
             className="relative rounded-lg shadow-md h-56 md:h-64 bg-cover bg-center transition-transform duration-300 ease-out hover:scale-105 hover:-rotate-1"
-            style={{ backgroundImage: "url('/images/image4.jpg')", perspective: "1000px" }}
+            style={{ backgroundImage: "url('/image4.JPG')", perspective: "1000px" }}
           >
             <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center p-4">
               <p className="text-white italic text-lg mb-3 text-center">
