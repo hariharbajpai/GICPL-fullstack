@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import useAuth
 
-axios.defaults.baseURL = 'http://localhost:5000'; // Set base URL
+axios.defaults.baseURL = 'https://gicpl-fullstack-backend.onrender.com'; // Set base URL
 
 export default function AdminAuth() {
   const [formData, setFormData] = useState({
