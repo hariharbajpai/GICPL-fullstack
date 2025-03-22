@@ -20,7 +20,7 @@ dotenv.config();
 // 🔹 Validate Environment Variables
 const env = cleanEnv(process.env, {
   PORT: num({ default: 5000 }),
-  CLIENT_URL: str({ default: 'http://localhost:5173' }),
+  CLIENT_URL: str({ default: 'https://gicpl-fullstack-frontend.onrender.com' }), // Update with your frontend URL
   MONGODB_URI: str(),
   JWT_SECRET: str(),
   EMAIL_USER: str(),
@@ -45,6 +45,8 @@ app.use(cors({
     }
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(helmet({
