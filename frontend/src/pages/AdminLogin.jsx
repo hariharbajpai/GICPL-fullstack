@@ -11,7 +11,7 @@ export default function AdminLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/admin/login', { email, password });
+      const response = await axios.post('https://gicpl-fullstack-backend.onrender.com/api/admin/login', { email, password });
       if (response.data.success) {
         localStorage.setItem('token', response.data.token); // Save token to localStorage
         alert('Login successful!');

@@ -16,10 +16,10 @@ export default function ForgotPassword() {
     setError('');
 
     try {
-      const response = await axios.post('/api/admin/reset-password', {
+      const response = await axios.post('https://gicpl-fullstack-backend.onrender.com/api/admin/reset-password', {
         email,
         phone,
-        newPassword
+        newPassword,
       });
 
       if (response.data.success) {
@@ -35,7 +35,6 @@ export default function ForgotPassword() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Reset Password</h2>
-
         {message && <p className="text-green-500 mb-4">{message}</p>}
         {error && <p className="text-red-500 mb-4">{error}</p>}
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
 const Schedule = () => {
@@ -18,7 +17,7 @@ const Schedule = () => {
 
   const fetchSchedules = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/schedule/schedules');
+      const response = await axios.get('https://gicpl-fullstack-backend.onrender.com/api/schedule/schedules');
       setMatches(response.data.data.matches);
       setPressConferences(response.data.data.pressConferences);
       setAuctions(response.data.data.auctions);
@@ -29,7 +28,7 @@ const Schedule = () => {
 
   const addMatchSchedule = async () => {
     try {
-      await axios.post('http://localhost:5000/api/schedule/match-schedule', { team1, team2, date }, {
+      await axios.post('https://gicpl-fullstack-backend.onrender.com/api/schedule/match-schedule', { team1, team2, date }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       fetchSchedules();
@@ -40,7 +39,7 @@ const Schedule = () => {
 
   const addPressConference = async () => {
     try {
-      await axios.post('http://localhost:5000/api/schedule/press-conference', { driveLink: pressLink }, {
+      await axios.post('https://gicpl-fullstack-backend.onrender.com/api/schedule/press-conference', { driveLink: pressLink }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       fetchSchedules();
@@ -51,7 +50,7 @@ const Schedule = () => {
 
   const addAuction = async () => {
     try {
-      await axios.post('http://localhost:5000/api/schedule/auction', { driveLink: auctionLink }, {
+      await axios.post('https://gicpl-fullstack-backend.onrender.com/api/schedule/auction', { driveLink: auctionLink }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       fetchSchedules();
@@ -62,7 +61,7 @@ const Schedule = () => {
 
   const deleteMatchSchedule = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/schedule/match-schedule/${id}`, {
+      const response = await axios.delete(`https://gicpl-fullstack-backend.onrender.com/api/schedule/match-schedule/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
