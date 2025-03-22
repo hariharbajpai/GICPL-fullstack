@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import useAuth
@@ -14,8 +14,17 @@ export default function AdminAuth() {
   });
   const [isSignup, setIsSignup] = useState(false); // Toggle between Login & Signup
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
   const { login } = useAuth(); // Get login function from AuthContext
+
+  // Clear error message after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -26,6 +35,7 @@ export default function AdminAuth() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const endpoint = isSignup ? '/api/admin/signup' : '/api/admin/login';
@@ -57,6 +67,8 @@ export default function AdminAuth() {
       }
     } catch (error) {
       setError(error.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -125,8 +137,12 @@ export default function AdminAuth() {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
-          {isSignup ? 'Sign Up' : 'Login'}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 disabled:bg-blue-300"
+        >
+          {loading ? 'Loading...' : (isSignup ? 'Sign Up' : 'Login')}
         </button>
 
         {/* Toggle Signup/Login */}
