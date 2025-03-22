@@ -6,16 +6,16 @@ export default function Gallery() {
   const [error, setError] = useState(''); // For displaying error messages
 
   // Placeholder images for the gallery
-  const placeholderImages = [
-    { id: 1, src: '/images/image2.jpg' },
-    { id: 2, src: '/images/image5.jpg' },
-    { id: 3, src: '/images/image6.jpg' },
-    { id: 4, src: '/images/image7.jpg' },
-    { id: 5, src: '/images/image8.jpg' },
-    { id: 6, src: '/images/image3.jpg' },
-    { id: 7, src: '/images/image9.jpg' },
-    { id: 8, src: '/images/image11.jpg' },
-  ];
+ const placeholderImages = [
+  { id: 1, src: '/images/image2.jpg' },
+  { id: 2, src: '/images/image5.jpg' },
+  { id: 3, src: '/images/image6.jpg' },
+  { id: 4, src: '/images/image7.jpg' },
+  { id: 5, src: '/images/image8.jpg' },
+  { id: 6, src: '/images/image3.jpg' },
+  { id: 7, src: '/images/image9.jpg' },
+  { id: 8, src: '/images/image11.jpg' },
+];
 
   // Simulate admin check (replace with actual logic if needed)
   const checkAdmin = () => {
