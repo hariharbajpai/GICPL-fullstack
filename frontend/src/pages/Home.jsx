@@ -55,7 +55,7 @@ export default function Home() {
               <div className="text-4xl mb-4">👥</div>
               <h2 className="text-2xl font-bold mb-4">Team Profiles</h2>
               <p className="mb-4">Discover teams and player details.</p>
-              <a href="/teams" className="text-purple-400 hover:text-purple-300">
+              <a href="/Teams" className="text-purple-400 hover:text-purple-300">
                 View Teams →
               </a>
             </div>
