@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Gallery() {
   const [file, setFile] = useState(null);
@@ -6,24 +6,25 @@ export default function Gallery() {
   const [error, setError] = useState(''); // For displaying error messages
 
   // Placeholder images for the gallery
- const placeholderImages = [
-  { id: 1, src: '/images/image2.jpg' },
-  { id: 2, src: '/images/image5.jpg' },
-  { id: 3, src: '/images/image6.jpg' },
-  { id: 4, src: '/images/image7.jpg' },
-  { id: 5, src: '/images/image8.jpg' },
-  { id: 6, src: '/images/image3.jpg' },
-  { id: 7, src: '/images/image9.jpg' },
-  { id: 8, src: '/images/image11.jpg' },
-];
+  const placeholderImages = [
+    { id: 1, src: '/image2.jpg' }, 
+    { id: 2, src: '/image5.JPG' },
+    { id: 3, src: '/image6.JPG' },
+    { id: 4, src: '/image7.JPG' },
+    { id: 5, src: '/image8.JPG' },
+    { id: 6, src: '/image3.jpg' },
+    { id: 7, src: '/image9.JPG' },
+    { id: 8, src: '/image11.JPG' },
+  ];
+  
 
   // Simulate admin check (replace with actual logic if needed)
-  const checkAdmin = () => {
+  useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setIsAdmin(true); // Assume the user is an admin if a token exists
     }
-  };
+  }, []);
 
   // Handle file upload (frontend-only simulation)
   const handleUpload = (e) => {
@@ -40,11 +41,6 @@ export default function Gallery() {
     setFile(null); // Reset file input
     setError('');
   };
-
-  // Check if the user is an admin on component mount
-  useState(() => {
-    checkAdmin();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -75,13 +71,11 @@ export default function Gallery() {
       {/* Main Card for Welcome GIF */}
       <div className="max-w-4xl mx-auto mb-8">
         <div className="bg-white p-4 rounded-lg shadow-md transform transition-transform hover:scale-105 hover:shadow-2xl">
-          <div className="aspect-w-4 aspect-h-9">
-            <img
-              src="/images/welcome gicpl.gif" // Replace with your GIF URL
-              alt="Welcome GIF"
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
+          <img
+            src="/welcome gicpl.gif" // Updated GIF path
+            alt="Welcome GIF"
+            className="w-full h-auto object-cover rounded-lg"
+          />
         </div>
       </div>
 
