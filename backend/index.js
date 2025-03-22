@@ -17,7 +17,7 @@ const scheduleRoutes = require('./routes/scheduleRoutes');
 
 dotenv.config();
 
-// Validate Environment Variables
+// 🔹 Validate Environment Variables
 const env = cleanEnv(process.env, {
   PORT: num({ default: 5000 }),
   CLIENT_URL: str({ default: 'http://localhost:5173' }),
@@ -30,63 +30,60 @@ const env = cleanEnv(process.env, {
 const app = express();
 const PORT = env.PORT;
 
-// Connect to MongoDB
+// 🔹 Connect to MongoDB
 connectDB();
 
-// Security Middlewares
+// 🔹 Security Middlewares
 const allowedOrigins = env.CLIENT_URL.split(',');
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('CORS Policy: Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-    xssFilter: true,
-    noSniff: true,
-    frameguard: { action: 'deny' },
-  })
-);
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  xssFilter: true,
+  noSniff: true,
+  frameguard: { action: 'deny' },
+}));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(compression());
 app.use(morgan('[:date[iso]] ":method :url" :status - :response-time ms'));
 
-// Rate Limiting
-const createRateLimiter = (maxRequests, windowMs, message) =>
-  rateLimit({
-    windowMs,
-    max: maxRequests,
-    message: { success: false, message },
-    headers: true,
-  });
+// 🔹 Rate Limiting
+const createRateLimiter = (maxRequests, windowMs, message) => rateLimit({
+  windowMs,
+  max: maxRequests,
+  message: { success: false, message },
+  headers: true,
+});
 
 app.use('/api/', createRateLimiter(200, 10 * 60 * 1000, 'Too many requests, try later.'));
 app.use('/api/admin', createRateLimiter(50, 10 * 60 * 1000, 'Too many admin requests, slow down.'));
 app.use('/api/auth', createRateLimiter(20, 10 * 60 * 1000, 'Too many authentication requests, slow down.'));
 
-// Static File Serving
+// 🔹 Static File Serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// API Routes
-app.use('/api/admin', adminRoutes);
+// 🔹 API Routes
+app.use("/api/admin", adminRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/schedule', scheduleRoutes);
 
-// Health Check Endpoint
+// 🔹 Health Check Endpoint
 app.get('/api/health', async (req, res) => {
   try {
     await mongoose.connection.db.admin().ping();
@@ -97,12 +94,10 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// 404 Middleware
-app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
-});
+// 🔹 404 Middleware
+app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found' }));
 
-// Global Error Handler
+// 🔹 Global Error Handler
 app.use((err, req, res, next) => {
   console.error(`❌ Error: ${err.message}`);
 
@@ -114,25 +109,22 @@ app.use((err, req, res, next) => {
     return res.status(401).json({ success: false, message: 'Unauthorized' });
   }
 
-  if (err.message.includes('CORS Policy')) {
-    return res.status(403).json({ success: false, message: 'CORS Policy Error: Unauthorized Origin' });
-  }
-
   res.status(500).json({ success: false, message: 'Internal Server Error' });
 });
 
-// Start Server
+// 🔹 Start Server
 const server = app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 
-// Graceful Shutdown
+// 🔹 Graceful Shutdown
 const shutdown = (signal) => {
   console.log(`🛑 ${signal} received. Closing server...`);
   server.close(async () => {
     console.log('✅ Server shutdown complete.');
-    await mongoose.connection.close();
+    await mongoose.connection.close(); // Close MongoDB connection
     process.exit(0);
   });
 
+  // Force close server after 10 seconds
   setTimeout(() => {
     console.error('❌ Forcing server shutdown...');
     process.exit(1);
