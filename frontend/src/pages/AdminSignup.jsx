@@ -11,7 +11,7 @@ export default function AdminSignup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/admin/signup', { email, password });
+      const response = await axios.post('https://gicpl-fullstack-backend.onrender.com/api/admin/signup', { email, password });
       if (response.data.success) {
         alert('Admin created successfully!');
         navigate('/admin/login'); // Redirect to login page
