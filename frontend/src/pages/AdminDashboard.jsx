@@ -39,14 +39,14 @@ export default function AdminDashboard() {
         {/* Total Users */}
         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow transform hover:scale-105">
           <h3 className="text-xl font-semibold text-gray-800">Total Users</h3>
-          <p className="text-3xl font-bold text-blue-600 mt-2">1,234</p>
+          <p className="text-3xl font-bold text-blue-600 mt-2">37</p>
           <p className="text-gray-500">Active users on the platform</p>
         </div>
 
         {/* Total Teams */}
         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow transform hover:scale-105">
           <h3 className="text-xl font-semibold text-gray-800">Total Teams</h3>
-          <p className="text-3xl font-bold text-purple-600 mt-2">56</p>
+          <p className="text-3xl font-bold text-purple-600 mt-2">8</p>
           <p className="text-gray-500">Teams registered in GICPL</p>
         </div>
 
@@ -84,7 +84,8 @@ export default function AdminDashboard() {
           <div className="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
             <div className="w-2 h-2 bg-green-600 rounded-full mr-4"></div>
             <div>
-              <p className="text-gray-800">New match scheduled: Team A vs Team B</p>
+              <p className="text-gray-800">No match schedule yet!
+              </p>
               <p className="text-sm text-gray-500">1 day ago</p>
             </div>
           </div>
