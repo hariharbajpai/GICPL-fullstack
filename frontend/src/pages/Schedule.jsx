@@ -1,110 +1,199 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const Schedule = () => {
   const [matches, setMatches] = useState([]);
-  const [pressConferences, setPressConferences] = useState([]);
-  const [auctions, setAuctions] = useState([]);
   const [team1, setTeam1] = useState('');
   const [team2, setTeam2] = useState('');
-  const [date, setDate] = useState('');
+  const [matchDate, setMatchDate] = useState('');
+
   const [pressLink, setPressLink] = useState('');
   const [auctionLink, setAuctionLink] = useState('');
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchSchedules();
+    fetchMatches();
+    fetchGlobalLinks();
   }, []);
 
-  const fetchSchedules = async () => {
+  const fetchMatches = async () => {
     try {
-      const response = await axios.get('https://gicpl-fullstack-backend.onrender.com/api/schedule/schedules');
-      setMatches(response.data.data.matches);
-      setPressConferences(response.data.data.pressConferences);
-      setAuctions(response.data.data.auctions);
+      const response = await axios.get('https://gicpl-fullstack-backend.onrender.com/api/matches');
+      setMatches(response.data.data);
     } catch (err) {
-      console.error('Error fetching schedules:', err);
+      console.error('Error fetching matches:', err);
     }
   };
 
-  const addMatchSchedule = async () => {
+  const fetchGlobalLinks = async () => {
     try {
-      await axios.post('https://gicpl-fullstack-backend.onrender.com/api/schedule/match-schedule', { team1, team2, date }, {
+      const res = await axios.get('https://gicpl-fullstack-backend.onrender.com/api/global-links');
+      setPressLink(res.data.pressConferenceLink || '');
+      setAuctionLink(res.data.auctionLink || '');
+    } catch (err) {
+      console.error('Error fetching global links:', err);
+    }
+  };
+
+  const addMatch = async () => {
+    if (!team1.trim() || !team2.trim() || !matchDate.trim()) {
+      alert('Team names and date are required.');
+      return;
+    }
+
+    try {
+      await axios.post(
+        'https://gicpl-fullstack-backend.onrender.com/api/matches',
+        { team1, team2, matchDate },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      setTeam1('');
+      setTeam2('');
+      setMatchDate('');
+      fetchMatches();
+    } catch (err) {
+      console.error('Error adding match:', err);
+      alert('Failed to add match.');
+    }
+  };
+
+  const deleteMatch = async (id) => {
+    try {
+      await axios.delete(`https://gicpl-fullstack-backend.onrender.com/api/matches/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      fetchSchedules();
+      fetchMatches();
     } catch (err) {
-      console.error('Error adding match schedule:', err);
+      console.error('Error deleting match:', err);
+      alert('Failed to delete match.');
     }
   };
 
-  const addPressConference = async () => {
+  const updatePressLink = async () => {
     try {
-      await axios.post('https://gicpl-fullstack-backend.onrender.com/api/schedule/press-conference', { driveLink: pressLink }, {
+      await axios.patch(
+        'https://gicpl-fullstack-backend.onrender.com/api/global-links/press',
+        { pressConferenceLink: pressLink },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      alert('Press link updated');
+    } catch (err) {
+      console.error('Error updating press link:', err);
+      alert('Failed to update press link.');
+    }
+  };
+
+  const deletePressLink = async () => {
+    try {
+      await axios.delete('https://gicpl-fullstack-backend.onrender.com/api/global-links/press', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      fetchSchedules();
+      setPressLink('');
+      alert('Press link deleted');
     } catch (err) {
-      console.error('Error adding press conference:', err);
+      console.error('Error deleting press link:', err);
+      alert('Failed to delete press link.');
     }
   };
 
-  const addAuction = async () => {
+  const updateAuctionLink = async () => {
     try {
-      await axios.post('https://gicpl-fullstack-backend.onrender.com/api/schedule/auction', { driveLink: auctionLink }, {
+      await axios.patch(
+        'https://gicpl-fullstack-backend.onrender.com/api/global-links/auction',
+        { auctionLink },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      alert('Auction link updated');
+    } catch (err) {
+      console.error('Error updating auction link:', err);
+      alert('Failed to update auction link.');
+    }
+  };
+
+  const deleteAuctionLink = async () => {
+    try {
+      await axios.delete('https://gicpl-fullstack-backend.onrender.com/api/global-links/auction', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      fetchSchedules();
+      setAuctionLink('');
+      alert('Auction link deleted');
     } catch (err) {
-      console.error('Error adding auction:', err);
-    }
-  };
-
-  const deleteMatchSchedule = async (id) => {
-    try {
-      const response = await axios.delete(`https://gicpl-fullstack-backend.onrender.com/api/schedule/match-schedule/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      alert(response.data.message);
-      fetchSchedules();
-    } catch (err) {
-      console.error('Error deleting match schedule:', err);
-      alert('An error occurred while deleting the match schedule');
+      console.error('Error deleting auction link:', err);
+      alert('Failed to delete auction link.');
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-4xl font-bold text-center py-8">Match Schedule</h1>
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold mb-4">Add Match Schedule</h2>
-        <input type="text" placeholder="Team 1" value={team1} onChange={(e) => setTeam1(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-        <input type="text" placeholder="Team 2" value={team2} onChange={(e) => setTeam2(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-        <button onClick={addMatchSchedule} className="bg-blue-500 text-white p-2 rounded">Add Match</button>
+
+      {/* ✅ Add Match Section */}
+      {user?.role === 'admin' && (
+        <div className="max-w-2xl mx-auto mb-10">
+          <h2 className="text-2xl font-bold mb-4">Add New Match</h2>
+          <input type="text" placeholder="Team 1" value={team1} onChange={(e) => setTeam1(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+          <input type="text" placeholder="Team 2" value={team2} onChange={(e) => setTeam2(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+          <input type="date" value={matchDate} onChange={(e) => setMatchDate(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+          <button onClick={addMatch} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full">Add Match</button>
+        </div>
+      )}
+
+      {/* ✅ Global Press Link Section */}
+      <div className="max-w-2xl mx-auto mb-10">
+        <h2 className="text-2xl font-bold mb-4">Press Conference Link</h2>
+        {user?.role === 'admin' && (
+          <>
+            <input type="text" placeholder="Enter Press Conference Link" value={pressLink} onChange={(e) => setPressLink(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+            <div className="flex gap-2">
+              <button onClick={updatePressLink} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full">Update</button>
+              <button onClick={deletePressLink} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 w-full">Delete</button>
+            </div>
+          </>
+        )}
+        {pressLink && (
+          <a href={pressLink} target="_blank" rel="noopener noreferrer" className="block mt-4 text-blue-600 underline">View Press Conference</a>
+        )}
       </div>
 
-      <div className="max-w-2xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4">Match Schedules</h2>
-        {matches.map((match) => (
-          <div key={match._id} className="bg-white p-4 mb-2 rounded shadow flex justify-between items-center">
-            <p>{match.team1} vs {match.team2} on {new Date(match.date).toLocaleDateString()}</p>
-            <button onClick={() => deleteMatchSchedule(match._id)} className="bg-red-500 text-white p-2 rounded">Delete</button>
+      {/* ✅ Global Auction Link Section */}
+      <div className="max-w-2xl mx-auto mb-10">
+        <h2 className="text-2xl font-bold mb-4">Auction Link</h2>
+        {user?.role === 'admin' && (
+          <>
+            <input type="text" placeholder="Enter Auction Link" value={auctionLink} onChange={(e) => setAuctionLink(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+            <div className="flex gap-2">
+              <button onClick={updateAuctionLink} className="bg-purple-500 text-white p-2 rounded hover:bg-purple-600 w-full">Update</button>
+              <button onClick={deleteAuctionLink} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 w-full">Delete</button>
+            </div>
+          </>
+        )}
+        {auctionLink && (
+          <a href={auctionLink} target="_blank" rel="noopener noreferrer" className="block mt-4 text-purple-600 underline">View Auction</a>
+        )}
+      </div>
+
+      {/* ✅ Match List Section */}
+      <div className="max-w-4xl mx-auto mt-12">
+        <h2 className="text-3xl font-bold mb-6 text-center">Scheduled Matches</h2>
+        {matches.length === 0 ? (
+          <p className="text-center text-gray-600">No matches scheduled yet</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {matches.map((match) => (
+              <div key={match._id} className="bg-white p-6 rounded-lg shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl">
+                <h3 className="text-2xl font-bold text-center mb-2">{match.team1} vs {match.team2}</h3>
+                <p className="text-center text-gray-600">Date: {new Date(match.matchDate).toLocaleDateString()}</p>
+                {user?.role === 'admin' && (
+                  <button onClick={() => deleteMatch(match._id)} className="mt-4 w-full bg-red-600 text-white p-2 rounded hover:bg-red-700">
+                    Delete Match
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <div className="max-w-2xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4">Add Press Conference Link</h2>
-        <input type="text" placeholder="Google Drive Link" value={pressLink} onChange={(e) => setPressLink(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-        <button onClick={addPressConference} className="bg-blue-500 text-white p-2 rounded">Add Press Conference</button>
-      </div>
-
-      <div className="max-w-2xl mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4">Add Auction Link</h2>
-        <input type="text" placeholder="Google Drive Link" value={auctionLink} onChange={(e) => setAuctionLink(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-        <button onClick={addAuction} className="bg-blue-500 text-white p-2 rounded">Add Auction</button>
+        )}
       </div>
     </div>
   );

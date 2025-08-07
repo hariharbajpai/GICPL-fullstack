@@ -10,17 +10,19 @@ const { cleanEnv, str, num } = require('envalid');
 const mongoose = require('mongoose');
 const connectDB = require('./utils/db');
 
+// Route imports
 const adminRoutes = require('./routes/adminRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const globalLinksRoutes = require('./routes/globalLinksRoutes'); // ✅ NEW
 
 dotenv.config();
 
 // 🔹 Validate Environment Variables
 const env = cleanEnv(process.env, {
   PORT: num({ default: 5000 }),
-  CLIENT_URL: str({ default: 'https://gicpl-fullstack-frontend.onrender.com' }), // Update with your frontend URL
+  CLIENT_URL: str({ default: 'http://localhost:5173' }),
   MONGODB_URI: str(),
   JWT_SECRET: str(),
   EMAIL_USER: str(),
@@ -33,7 +35,7 @@ const PORT = env.PORT;
 // 🔹 Connect to MongoDB
 connectDB();
 
-// 🔹 Security Middlewares
+// 🔹 CORS Setup
 const allowedOrigins = env.CLIENT_URL.split(',');
 
 app.use(cors({
@@ -41,14 +43,15 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error('Not allowed by CORS: ' + origin));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// 🔹 Security Middlewares
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -57,6 +60,7 @@ app.use(helmet({
   frameguard: { action: 'deny' },
 }));
 
+// 🔹 General Middlewares
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(compression());
@@ -82,6 +86,7 @@ app.use("/api/admin", adminRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/schedule', scheduleRoutes);
+app.use('/api/global-links', globalLinksRoutes); // ✅ NEW
 
 // 🔹 Health Check Endpoint
 app.get('/api/health', async (req, res) => {
@@ -120,11 +125,10 @@ const shutdown = (signal) => {
   console.log(`🛑 ${signal} received. Closing server...`);
   server.close(async () => {
     console.log('✅ Server shutdown complete.');
-    await mongoose.connection.close(); // Close MongoDB connection
+    await mongoose.connection.close();
     process.exit(0);
   });
 
-  // Force close server after 10 seconds
   setTimeout(() => {
     console.error('❌ Forcing server shutdown...');
     process.exit(1);
