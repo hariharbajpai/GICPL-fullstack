@@ -35,10 +35,10 @@ const PORT = env.PORT;
 // 🔹 Connect to MongoDB
 connectDB();
 
-// 🔹 CORS Setup
+// 🔹 CORS Setup (updated with PATCH support)
 const allowedOrigins = env.CLIENT_URL.split(',');
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -47,9 +47,12 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // ✅ PATCH added
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ Explicit preflight handler
 
 // 🔹 Security Middlewares
 app.use(helmet({

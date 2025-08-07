@@ -129,61 +129,29 @@ const Schedule = () => {
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-4xl font-bold text-center py-8">Match Schedule</h1>
 
-      {/* ✅ Add Match Section */}
+      {/* 🔹 Add Match Section */}
       {user?.role === 'admin' && (
         <div className="max-w-2xl mx-auto mb-10">
-          <h2 className="text-2xl font-bold mb-4">Add New Match</h2>
-          <input type="text" placeholder="Team 1" value={team1} onChange={(e) => setTeam1(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-          <input type="text" placeholder="Team 2" value={team2} onChange={(e) => setTeam2(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-          <input type="date" value={matchDate} onChange={(e) => setMatchDate(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-          <button onClick={addMatch} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full">Add Match</button>
+          <div className="bg-white p-6 rounded-2xl shadow-xl hover:shadow-2xl transform transition-transform hover:scale-[1.02]">
+            <h2 className="text-2xl font-bold mb-4 text-blue-700">Add New Match</h2>
+            <input type="text" placeholder="Team 1" value={team1} onChange={(e) => setTeam1(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+            <input type="text" placeholder="Team 2" value={team2} onChange={(e) => setTeam2(e.target.value)} className="w-full p-2 mb-2 border rounded" />
+            <input type="date" value={matchDate} onChange={(e) => setMatchDate(e.target.value)} className="w-full p-2 mb-4 border rounded" />
+            <button onClick={addMatch} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full">Add Match</button>
+          </div>
         </div>
       )}
 
-      {/* ✅ Global Press Link Section */}
-      <div className="max-w-2xl mx-auto mb-10">
-        <h2 className="text-2xl font-bold mb-4">Press Conference Link</h2>
-        {user?.role === 'admin' && (
-          <>
-            <input type="text" placeholder="Enter Press Conference Link" value={pressLink} onChange={(e) => setPressLink(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-            <div className="flex gap-2">
-              <button onClick={updatePressLink} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full">Update</button>
-              <button onClick={deletePressLink} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 w-full">Delete</button>
-            </div>
-          </>
-        )}
-        {pressLink && (
-          <a href={pressLink} target="_blank" rel="noopener noreferrer" className="block mt-4 text-blue-600 underline">View Press Conference</a>
-        )}
-      </div>
-
-      {/* ✅ Global Auction Link Section */}
-      <div className="max-w-2xl mx-auto mb-10">
-        <h2 className="text-2xl font-bold mb-4">Auction Link</h2>
-        {user?.role === 'admin' && (
-          <>
-            <input type="text" placeholder="Enter Auction Link" value={auctionLink} onChange={(e) => setAuctionLink(e.target.value)} className="w-full p-2 mb-2 border rounded" />
-            <div className="flex gap-2">
-              <button onClick={updateAuctionLink} className="bg-purple-500 text-white p-2 rounded hover:bg-purple-600 w-full">Update</button>
-              <button onClick={deleteAuctionLink} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 w-full">Delete</button>
-            </div>
-          </>
-        )}
-        {auctionLink && (
-          <a href={auctionLink} target="_blank" rel="noopener noreferrer" className="block mt-4 text-purple-600 underline">View Auction</a>
-        )}
-      </div>
-
-      {/* ✅ Match List Section */}
+      {/* 🔹 Match Cards Section */}
       <div className="max-w-4xl mx-auto mt-12">
-        <h2 className="text-3xl font-bold mb-6 text-center">Scheduled Matches</h2>
+        {/* <h2 className="text-3xl font-bold mb-6 text-center">Scheduled Matches</h2> */}
         {matches.length === 0 ? (
           <p className="text-center text-gray-600">No matches scheduled yet</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {matches.map((match) => (
-              <div key={match._id} className="bg-white p-6 rounded-lg shadow-lg transform transition-transform hover:scale-105 hover:shadow-2xl">
-                <h3 className="text-2xl font-bold text-center mb-2">{match.team1} vs {match.team2}</h3>
+              <div key={match._id} className="bg-white p-6 rounded-xl shadow-lg transform transition-transform hover:scale-[1.02] hover:shadow-2xl">
+                <h3 className="text-2xl font-bold text-center mb-2 text-gray-800">{match.team1} vs {match.team2}</h3>
                 <p className="text-center text-gray-600">Date: {new Date(match.matchDate).toLocaleDateString()}</p>
                 {user?.role === 'admin' && (
                   <button onClick={() => deleteMatch(match._id)} className="mt-4 w-full bg-red-600 text-white p-2 rounded hover:bg-red-700">
@@ -194,6 +162,44 @@ const Schedule = () => {
             ))}
           </div>
         )}
+      </div>
+
+      {/* 🔹 Global Press Conference Card */}
+      <div className="max-w-2xl mx-auto mt-16">
+        <div className="bg-white shadow-xl rounded-2xl p-6 transform transition-transform hover:scale-[1.02] hover:shadow-2xl">
+          <h2 className="text-2xl font-bold mb-4 text-blue-600">🎙️ Press Conference Link</h2>
+          {user?.role === 'admin' && (
+            <>
+              <input type="text" placeholder="Enter Press Conference Link" value={pressLink} onChange={(e) => setPressLink(e.target.value)} className="w-full p-2 mb-4 border rounded" />
+              <div className="flex gap-2">
+                <button onClick={updatePressLink} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 w-full">Update</button>
+                <button onClick={deletePressLink} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 w-full">Delete</button>
+              </div>
+            </>
+          )}
+          {pressLink && (
+            <a href={pressLink} target="_blank" rel="noopener noreferrer" className="block mt-4 text-blue-700 underline">View Press Conference</a>
+          )}
+        </div>
+      </div>
+
+      {/* 🔹 Global Auction Link Card */}
+      <div className="max-w-2xl mx-auto mt-10 mb-20">
+        <div className="bg-white shadow-xl rounded-2xl p-6 transform transition-transform hover:scale-[1.02] hover:shadow-2xl">
+          <h2 className="text-2xl font-bold mb-4 text-purple-700">🛒 Auction Link</h2>
+          {user?.role === 'admin' && (
+            <>
+              <input type="text" placeholder="Enter Auction Link" value={auctionLink} onChange={(e) => setAuctionLink(e.target.value)} className="w-full p-2 mb-4 border rounded" />
+              <div className="flex gap-2">
+                <button onClick={updateAuctionLink} className="bg-purple-500 text-white p-2 rounded hover:bg-purple-600 w-full">Update</button>
+                <button onClick={deleteAuctionLink} className="bg-red-500 text-white p-2 rounded hover:bg-red-600 w-full">Delete</button>
+              </div>
+            </>
+          )}
+          {auctionLink && (
+            <a href={auctionLink} target="_blank" rel="noopener noreferrer" className="block mt-4 text-purple-700 underline">View Auction</a>
+          )}
+        </div>
       </div>
     </div>
   );
