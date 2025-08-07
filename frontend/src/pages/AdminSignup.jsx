@@ -11,10 +11,13 @@ export default function AdminSignup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://gicpl-fullstack-backend.onrender.com/api/admin/signup', { email, password });
+      const response = await axios.post(
+        'https://gicpl-fullstack-backend.onrender.com/api/admin/signup',
+        { email, password }
+      );
       if (response.data.success) {
         alert('Admin created successfully!');
-        navigate('/admin/login'); // Redirect to login page
+        navigate('/admin/login');
       }
     } catch (error) {
       setError(error.response?.data?.message || 'Signup failed. Please try again.');
@@ -22,31 +25,49 @@ export default function AdminSignup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form onSubmit={handleSignup} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Admin Signup</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="mb-4">
-          <label className="block text-gray-700">Email</label>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 px-4">
+      <form
+        onSubmit={handleSignup}
+        className="animate-fadeIn3D bg-white/80 backdrop-blur-lg border border-gray-300 p-10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] transform transition-transform hover:scale-[1.02] max-w-md w-full"
+      >
+        <h2 className="text-4xl font-extrabold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-purple-500 to-blue-600 drop-shadow-lg">
+          Admin Signup
+        </h2>
+
+        {error && (
+          <div className="mb-4 p-3 text-red-600 bg-red-100 border border-red-300 rounded-lg text-sm text-center shadow-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="mb-5">
+          <label className="block text-gray-700 font-medium mb-1">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            placeholder="admin@example.com"
             required
           />
         </div>
+
         <div className="mb-6">
-          <label className="block text-gray-700">Password</label>
+          <label className="block text-gray-700 font-medium mb-1">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            placeholder="••••••••"
             required
           />
         </div>
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+
+        <button
+          type="submit"
+          className="w-full py-2 font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-md"
+        >
           Sign Up
         </button>
       </form>

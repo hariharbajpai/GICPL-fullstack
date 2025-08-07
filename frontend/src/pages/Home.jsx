@@ -23,45 +23,63 @@ export default function Home() {
       </section>
 
       {/* Information Cards Section */}
-      <section
-        key={Date.now()} // Ensures re-render
-        className="py-16 bg-cover bg-center"
-        style={{ backgroundImage: "url('/background2.jpg')" }}
-      >
-        <div className="container mx-auto px-4 flex justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Card 1: Upcoming Matches */}
-            <div className="bg-gray-700 bg-opacity-90 p-6 rounded-lg text-center">
-              <div className="text-4xl mb-4">📅</div>
-              <h2 className="text-2xl font-bold mb-4">Upcoming Matches</h2>
-              <p className="mb-4">Check out the latest match schedules and fixtures.</p>
-              <a href="/schedule" className="text-purple-400 hover:text-purple-300">
-                View Schedule →
+<section
+  key={Date.now()}
+  className="py-20 bg-cover bg-center"
+  style={{ backgroundImage: "url('/background2.jpg')" }}
+>
+  <div className="container mx-auto px-4 flex justify-center">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      {/* Card Template */}
+      {[
+        {
+          icon: "📅",
+          title: "Upcoming Matches",
+          desc: "Check out the latest match schedules and fixtures.",
+          link: "/schedule",
+          linkText: "View Schedule →"
+        },
+        {
+          icon: "📊",
+          title: "Tournament Stats",
+          desc: "Explore performance analytics and detailed statistics.",
+          link: null,
+          linkText: null
+        },
+        {
+          icon: "👥",
+          title: "Team Profiles",
+          desc: "Discover teams and player details.",
+          link: "/Teams",
+          linkText: "View Teams →"
+        }
+      ].map(({ icon, title, desc, link, linkText }, idx) => (
+        <div
+          key={idx}
+          className="relative group p-6 bg-gray-700/70 backdrop-blur-lg border border-gray-600 shadow-2xl rounded-2xl text-center transition-transform duration-300 ease-in-out transform hover:-translate-y-3 hover:scale-[1.03]"
+        >
+          <div className="absolute -inset-1 rounded-2xl blur-xl bg-gradient-to-r from-purple-700 via-indigo-500 to-blue-500 opacity-30 group-hover:opacity-70 transition duration-500" />
+          <div className="relative z-10">
+            <div className="text-5xl mb-4 drop-shadow-md">{icon}</div>
+            <h2 className="text-3xl font-extrabold text-white mb-4 tracking-wide">
+              {title}
+            </h2>
+            <p className="text-gray-200 mb-4 leading-relaxed">{desc}</p>
+            {link && (
+              <a
+                href={link}
+                className="inline-block mt-2 text-purple-300 hover:text-purple-100 font-semibold transition-colors duration-200"
+              >
+                {linkText}
               </a>
-            </div>
-
-                {/* Card 2: Tournament Stats */}
-                        <div className="bg-gray-700 bg-opacity-90 p-6 rounded-lg text-center">
-                            <div className="text-4xl mb-4">📊</div>
-                            <h2 className="text-2xl font-bold mb-4">Tournament Stats</h2>
-                            <p className="mb-4">Explore performance analytics and detailed statistics.</p>
-                            {/* <a href="/stats" className="text-purple-400 hover:text-purple-300">
-                                View Stats →
-                            </a> */}
-                        </div>
-
-            {/* Card 2: Team Profiles */}
-            <div className="bg-gray-700 bg-opacity-90 p-6 rounded-lg text-center">
-              <div className="text-4xl mb-4">👥</div>
-              <h2 className="text-2xl font-bold mb-4">Team Profiles</h2>
-              <p className="mb-4">Discover teams and player details.</p>
-              <a href="/Teams" className="text-purple-400 hover:text-purple-300">
-                View Teams →
-              </a>
-            </div>
+            )}
           </div>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
+
     </div>
   );
 }
