@@ -1,20 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getGlobalLinks,
-  updatePressLink,
-  updateAuctionLink,
-  deletePressLink,
-  deleteAuctionLink
-} = require('../controllers/globalLinksController');
+const ctrl = require('../controllers/globalLinksController');
 
-// If using auth middleware, add it here
-// const { protect } = require('../middlewares/authMiddleware');
+// Public GET
+router.get('/', ctrl.getGlobalLinks);
 
-router.get('/', getGlobalLinks);
-router.patch('/press', updatePressLink);
-router.patch('/auction', updateAuctionLink);
-router.delete('/press', deletePressLink);
-router.delete('/auction', deleteAuctionLink);
+// Admin updates (you can add auth middleware here)
+router.patch('/press', ctrl.updatePressLink);
+router.patch('/auction', ctrl.updateAuctionLink);
+router.delete('/press', ctrl.deletePressLink);
+router.delete('/auction', ctrl.deleteAuctionLink);
 
 module.exports = router;
