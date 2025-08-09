@@ -10,19 +10,19 @@ const { cleanEnv, str, num } = require('envalid');
 const mongoose = require('mongoose');
 const connectDB = require('./utils/db');
 
-// Route imports
+// Routes
 const adminRoutes = require('./routes/adminRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
-const globalLinksRoutes = require('./routes/globalLinksRoutes'); // ✅ NEW
+const teamRoutes = require('./routes/teamRoutes.js'); // ✅ teams
 
 dotenv.config();
 
 // 🔹 Validate Environment Variables
 const env = cleanEnv(process.env, {
   PORT: num({ default: 5000 }),
-  CLIENT_URL: str({ default: 'http://localhost:5173' }),
+  CLIENT_URL: str({ default: 'https://gicpl-fullstack-frontend.onrender.com' }),
   MONGODB_URI: str(),
   JWT_SECRET: str(),
   EMAIL_USER: str(),
@@ -32,38 +32,37 @@ const env = cleanEnv(process.env, {
 const app = express();
 const PORT = env.PORT;
 
+// Behind Render/NGINX/Cloudflare
+app.set('trust proxy', 1);
+
 // 🔹 Connect to MongoDB
 connectDB();
 
-// 🔹 CORS Setup (updated with PATCH support)
-const allowedOrigins = env.CLIENT_URL.split(',');
+// 🔹 Security Middlewares
+const allowedOrigins = env.CLIENT_URL.split(',').map(s => s.trim());
+// add common local dev origins if not present
+['http://localhost:5173', 'http://localhost:3000'].forEach(o => {
+  if (!allowedOrigins.includes(o)) allowedOrigins.push(o);
+});
 
-const corsOptions = {
+app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS: ' + origin));
-    }
+    // allow non-browser clients (no Origin) and exact matches
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // ✅ PATCH added
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-};
+}));
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // ✅ Explicit preflight handler
-
-// 🔹 Security Middlewares
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  xssFilter: true,
-  noSniff: true,
   frameguard: { action: 'deny' },
+  noSniff: true,
 }));
 
-// 🔹 General Middlewares
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(compression());
@@ -85,11 +84,11 @@ app.use('/api/auth', createRateLimiter(20, 10 * 60 * 1000, 'Too many authenticat
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 🔹 API Routes
-app.use("/api/admin", adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/schedule', scheduleRoutes);
-app.use('/api/global-links', globalLinksRoutes); // ✅ NEW
+app.use('/api/teams', teamRoutes); // ✅ teams
 
 // 🔹 Health Check Endpoint
 app.get('/api/health', async (req, res) => {
@@ -112,11 +111,9 @@ app.use((err, req, res, next) => {
   if (err.name === 'ValidationError') {
     return res.status(400).json({ success: false, message: err.message });
   }
-
   if (err.name === 'UnauthorizedError') {
     return res.status(401).json({ success: false, message: 'Unauthorized' });
   }
-
   res.status(500).json({ success: false, message: 'Internal Server Error' });
 });
 
@@ -131,7 +128,6 @@ const shutdown = (signal) => {
     await mongoose.connection.close();
     process.exit(0);
   });
-
   setTimeout(() => {
     console.error('❌ Forcing server shutdown...');
     process.exit(1);
@@ -144,3 +140,4 @@ process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
   process.exit(1);
 });
+  
