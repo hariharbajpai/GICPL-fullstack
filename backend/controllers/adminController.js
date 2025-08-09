@@ -13,6 +13,7 @@ const allowedEmails = new Set([
   'agrawal.aryan1000@gmail.com',
   'saharsss64@gmail.com',
   'harihar701764@gmail.com',
+  'Spydyyou321@gmail.com',
 ]);
 
 const transporter = nodemailer.createTransport({
