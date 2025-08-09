@@ -177,78 +177,82 @@ export default function Teams() {
         🏏 GICPL Teams
       </h1>
 
-      {/* Admin quick tools */}
-      <div className="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl shadow">
-        <details>
-          <summary className="cursor-pointer font-semibold">Admin Tools (testing)</summary>
-          <div className="grid md:grid-cols-2 gap-4 mt-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">JWT Token</label>
-              <textarea
-                className="w-full border rounded-lg px-3 py-2 h-24"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                placeholder="Paste admin JWT here"
-              />
-              <div className="mt-2 flex gap-2">
-                <button
-                  onClick={() => {
-                    localStorage.setItem("token", token.trim());
-                    alert("Token saved");
-                  }}
-                  className="px-3 py-2 border rounded-lg hover:bg-gray-50"
-                >
-                  Save Token
-                </button>
-                <button
-                  onClick={() => {
-                    setToken("");
-                    localStorage.removeItem("token");
-                    alert("Token cleared");
-                  }}
-                  className="px-3 py-2 border rounded-lg hover:bg-gray-50"
-                >
-                  Clear Token
-                </button>
+      {/* Admin quick tools — visible ONLY to admins */}
+      {isAdmin && (
+        <div className="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl shadow">
+          <details>
+            <summary className="cursor-pointer font-semibold">Admin Tools</summary>
+            <div className="grid md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">JWT Token</label>
+                <textarea
+                  className="w-full border rounded-lg px-3 py-2 h-24"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="Paste admin JWT here"
+                />
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("token", token.trim());
+                      alert("Token saved");
+                    }}
+                    className="px-3 py-2 border rounded-lg hover:bg-gray-50"
+                  >
+                    Save Token
+                  </button>
+                  <button
+                    onClick={() => {
+                      setToken("");
+                      localStorage.removeItem("token");
+                      alert("Token cleared");
+                    }}
+                    className="px-3 py-2 border rounded-lg hover:bg-gray-50"
+                  >
+                    Clear Token
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Role</label>
-              <select
-                className="w-full border rounded-lg px-3 py-2"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option value="">(none)</option>
-                <option value="ADMIN">ADMIN</option>
-              </select>
-              <div className="mt-2 flex gap-2">
-                <button
-                  onClick={() => {
-                    localStorage.setItem("role", role);
-                    alert("Role saved");
-                  }}
-                  className="px-3 py-2 border rounded-lg hover:bg-gray-50"
+              <div>
+                <label className="block text-sm font-medium mb-1">Role</label>
+                <select
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
                 >
-                  Save Role
-                </button>
-                <button
-                  onClick={() => {
-                    setRole("");
-                    localStorage.removeItem("role");
-                    alert("Role cleared");
-                  }}
-                  className="px-3 py-2 border rounded-lg hover:bg-gray-50"
-                >
-                  Clear Role
-                </button>
+                  <option value="">(none)</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("role", role);
+                      alert("Role saved");
+                    }}
+                    className="px-3 py-2 border rounded-lg hover:bg-gray-50"
+                  >
+                    Save Role
+                  </button>
+                  <button
+                    onClick={() => {
+                      setRole("");
+                      localStorage.removeItem("role");
+                      alert("Role cleared");
+                    }}
+                    className="px-3 py-2 border rounded-lg hover:bg-gray-50"
+                  >
+                    Clear Role
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <p className="text-xs text-gray-500 mt-3">Admin panel appears if a token is set or role is ADMIN.</p>
-        </details>
-      </div>
+            <p className="text-xs text-gray-500 mt-3">
+              Admin panel appears only if a token is set or role is ADMIN.
+            </p>
+          </details>
+        </div>
+      )}
 
       {/* Section switcher */}
       <div className="flex justify-center gap-3 mb-8">
@@ -267,7 +271,7 @@ export default function Teams() {
         ))}
       </div>
 
-      {/* Admin Panel: Create Team */}
+      {/* Admin Panel: Create Team (only for admins) */}
       {isAdmin && (
         <div className="max-w-4xl mx-auto mb-10 bg-white p-6 rounded-2xl shadow-lg">
           <h3 className="text-2xl font-bold mb-4">Admin: Add Team</h3>
@@ -491,15 +495,15 @@ export default function Teams() {
                     Refresh
                   </button>
 
-                    <button
-                      onClick={() => deleteTeam(selectedTeam._id)}
-                      disabled={busy}
-                      className={`px-4 py-2 rounded-lg text-white ${
-                        busy ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"
-                      }`}
-                    >
-                      Delete Team
-                    </button>
+                  <button
+                    onClick={() => deleteTeam(selectedTeam._id)}
+                    disabled={busy}
+                    className={`px-4 py-2 rounded-lg text-white ${
+                      busy ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"
+                    }`}
+                  >
+                    Delete Team
+                  </button>
                 </div>
               </>
             )}
