@@ -179,7 +179,6 @@ export default function PlayerProfile() {
             </p>
           </div>
 
-          {/* Search stays for everyone; remove if you want only admin */}
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
             <input
@@ -228,31 +227,50 @@ export default function PlayerProfile() {
                   onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
                   required
                   disabled={!!editingPhone}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
+                {/* jersey: numeric text box (no arrows) */}
                 <Input
                   label="Jersey #"
-                  type="number"
-                  value={form.jerseyNumber}
-                  onChange={(v) => setForm((f) => ({ ...f, jerseyNumber: v }))}
-                  min="0"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={String(form.jerseyNumber ?? "")}
+                  onChange={(v) =>
+                    setForm((f) => ({
+                      ...f,
+                      jerseyNumber:
+                        v.replace(/\D+/g, "") // keep digits only
+                        ,
+                    }))
+                  }
                 />
                 <Input
                   label="Photo URL"
                   value={form.photoUrl}
                   onChange={(v) => setForm((f) => ({ ...f, photoUrl: v }))}
                 />
+                {/* DOB with calendar */}
                 <Input
-                  label="DOB (YYYY-MM-DD)"
-                  value={form.dob}
+                  label="DOB"
+                  type="date"
+                  value={form.dob || ""}
                   onChange={(v) => setForm((f) => ({ ...f, dob: v }))}
                 />
-                <Input
-                  label="Bat Style (e.g., RHB/LHB)"
+
+                {/* 2-option sliders */}
+                <Seg2
+                  label="Bat Style"
+                  left={{ value: "RHB", title: "RHB" }}
+                  right={{ value: "LHB", title: "LHB" }}
                   value={form.batStyle}
                   onChange={(v) => setForm((f) => ({ ...f, batStyle: v }))}
                 />
-                <Input
+                <Seg2
                   label="Bowl Style"
+                  left={{ value: "Right-arm", title: "Right-arm" }}
+                  right={{ value: "Left-arm", title: "Left-arm" }}
                   value={form.bowlStyle}
                   onChange={(v) => setForm((f) => ({ ...f, bowlStyle: v }))}
                 />
@@ -336,6 +354,8 @@ export default function PlayerProfile() {
   );
 }
 
+/* ---------- UI bits ---------- */
+
 function Input({ label, value, onChange, type = "text", ...rest }) {
   return (
     <label className="flex flex-col gap-1">
@@ -343,9 +363,7 @@ function Input({ label, value, onChange, type = "text", ...rest }) {
       <input
         type={type}
         value={value}
-        onChange={(e) =>
-          onChange(type === "number" ? e.target.valueAsNumber ?? "" : e.target.value)
-        }
+        onChange={(e) => onChange(e.target.value)}
         className="px-3 py-2 rounded-lg bg-white border border-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
         {...rest}
       />
@@ -353,15 +371,40 @@ function Input({ label, value, onChange, type = "text", ...rest }) {
   );
 }
 
+// Numeric text box (no arrows). Defaults to 0 if empty/invalid.
 function Num({ label, path, value, onChange, step = "1" }) {
+  const allowDecimal = step !== "1";
+  const display = String(value ?? 0);
+
+  function toNumberString(raw) {
+    let s = String(raw || "");
+    // keep digits and at most one dot if decimals allowed
+    if (allowDecimal) {
+      s = s.replace(/[^\d.]/g, "");
+      const parts = s.split(".");
+      if (parts.length > 2) s = parts[0] + "." + parts.slice(1).join("");
+    } else {
+      s = s.replace(/\D+/g, "");
+    }
+    return s;
+  }
+
   return (
-    <Input
-      label={label}
-      type="number"
-      value={value}
-      onChange={(v) => onChange(path, Number.isFinite(v) ? v : 0)}
-      step={step}
-    />
+    <label className="flex flex-col gap-1">
+      <span className="text-sm text-slate-600">{label}</span>
+      <input
+        type="text"
+        inputMode={allowDecimal ? "decimal" : "numeric"}
+        pattern={allowDecimal ? "[0-9]*[.]?[0-9]*" : "[0-9]*"}
+        value={display}
+        onChange={(e) => {
+          const cleaned = toNumberString(e.target.value);
+          const num = cleaned === "" || cleaned === "." ? 0 : Number(cleaned);
+          onChange(path, Number.isFinite(num) ? num : 0);
+        }}
+        className="px-3 py-2 rounded-lg bg-white border border-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
+      />
+    </label>
   );
 }
 
@@ -370,6 +413,42 @@ function StatGroup({ title, children }) {
     <div className="md:col-span-3 rounded-xl border border-slate-200 bg-white p-4">
       <h3 className="font-semibold mb-3 text-slate-800">{title}</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">{children}</div>
+    </div>
+  );
+}
+
+/** 2-option pill slider (segmented control) */
+function Seg2({ label, left, right, value, onChange }) {
+  const isLeft = value === left.value;
+  const isRight = value === right.value;
+
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-sm text-slate-600">{label}</span>
+      <div className="inline-flex rounded-xl border border-slate-300 p-1 bg-white">
+        <button
+          type="button"
+          onClick={() => onChange(left.value)}
+          className={`px-4 py-2 rounded-lg transition ${
+            isLeft
+              ? "bg-violet-600 text-white"
+              : "text-slate-700 hover:bg-slate-100"
+          }`}
+        >
+          {left.title}
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange(right.value)}
+          className={`px-4 py-2 rounded-lg transition ${
+            isRight
+              ? "bg-violet-600 text-white"
+              : "text-slate-700 hover:bg-slate-100"
+          }`}
+        >
+          {right.title}
+        </button>
+      </div>
     </div>
   );
 }
